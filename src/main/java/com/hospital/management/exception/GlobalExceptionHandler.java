@@ -1,26 +1,28 @@
 package com.hospital.management.exception;
 
+import com.hospital.management.common.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceNotFound(
+    public ResponseEntity<ApiErrorResponse> handleResourceNotFound(
             ResourceNotFoundException ex
     ) {
 
-        Map<String, Object> response = Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", 404,
-                "error", "RESOURCE_NOT_FOUND",
-                "message", ex.getMessage()
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                404,
+                "RESOURCE_NOT_FOUND",
+                ex.getMessage()
         );
 
         return ResponseEntity
@@ -28,16 +30,17 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<Map<String, Object>> handleDuplicateResource(
+    public ResponseEntity<ApiErrorResponse> handleDuplicateResource(
             DuplicateResourceException ex
     ) {
 
-        Map<String, Object> response = Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", 409,
-                "error", "DUPLICATE_RESOURCE",
-                "message", ex.getMessage()
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                409,
+                "DUPLICATE_RESOURCE",
+                ex.getMessage()
         );
 
         return ResponseEntity
@@ -45,16 +48,45 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(
             IllegalArgumentException ex
     ) {
 
-        Map<String, Object> response = Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", 400,
-                "error", "BAD_REQUEST",
-                "message", ex.getMessage()
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                400,
+                "BAD_REQUEST",
+                ex.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+
+
+    // ADD THE VALIDATION HANDLER HERE
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidationErrors(
+            MethodArgumentNotValidException ex
+    ) {
+
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error ->
+                        error.getField() + ": " + error.getDefaultMessage()
+                )
+                .findFirst()
+                .orElse("Validation failed");
+
+        ApiErrorResponse response = new ApiErrorResponse(
+                LocalDateTime.now(),
+                400,
+                "VALIDATION_ERROR",
+                message
         );
 
         return ResponseEntity

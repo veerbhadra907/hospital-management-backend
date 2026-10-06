@@ -24,6 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.UUID;
+
 
 @Service
 public class PatientService {
@@ -63,12 +65,9 @@ public class PatientService {
         return patientMapper.toResponse(savedPatient);
     }
 
-        private String generatePatientId() {
-
-            long nextId = patientRepository.count() + 1;
-
-            return String.format("PAT-%d-%06d", 2026, nextId);
-        }
+    private String generatePatientId() {
+        return "PAT-" + UUID.randomUUID();
+    }
 
     @Transactional(readOnly = true)
     public PatientResponse getPatientById(String patientId) {
