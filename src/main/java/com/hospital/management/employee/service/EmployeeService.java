@@ -5,7 +5,7 @@ import com.hospital.management.employee.dto.EmployeeResponse;
 import com.hospital.management.employee.dto.EmployeeUpdateRequest;
 import com.hospital.management.employee.mapper.EmployeeMapper;
 import com.hospital.management.employee.model.Employee;
-import com.hospital.management.employee.respository.EmployeeRepository ;
+import com.hospital.management.employee.repository.EmployeeRepository ;
 import com.hospital.management.exception.DuplicateResourceException;
 import com.hospital.management.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;

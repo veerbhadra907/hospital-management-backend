@@ -1,4 +1,4 @@
-package com.hospital.management.employee.respository;
+package com.hospital.management.employee.repository;
 
 import com.hospital.management.employee.model.Employee;
 import com.hospital.management.employee.model.EmployeeRole;
