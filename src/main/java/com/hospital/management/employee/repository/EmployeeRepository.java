@@ -7,6 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
@@ -32,4 +38,23 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             EmployeeRole role,
             Pageable pageable
     );
+
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+    SELECT e
+    FROM Employee e
+    WHERE e.employeeId = :employeeId
+""")
+    Optional<Employee> findByEmployeeIdForUpdate(
+            @Param("employeeId") String employeeId
+    );
+
+
+
+
+
+
+
+
 }
